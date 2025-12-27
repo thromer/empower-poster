@@ -1,0 +1,133 @@
+[
+  {
+    "classificationTypeName": "Cash",
+    "assets": [
+      {
+        "ticker": "TICK1",
+        "description": "Description 1",
+        "value": 37.8
+      },
+      {
+        "ticker": "TICK2",
+        "description": "Description 2",
+        "value": 9.09
+      },
+      {
+        "ticker": "TICK3",
+        "description": "Description 3",
+        "value": 2.28
+      },
+      {
+        "ticker": "TICK4",
+        "description": "Description 4",
+        "value": 84.68
+      },
+      {
+        "ticker": "FBIIX",
+        "description": "Fidelity International Bond Index Fund",
+        "value": 1.23
+      },
+      {
+        "description": "Cash",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "Intl Bonds",
+    "classifications": [
+      {
+        "classificationTypeName": "Government",
+        "assets": [
+          {
+            "ticker": "TICK1",
+            "description": "Description 1",
+            "value": 15.78
+          },
+          {
+            "ticker": "TICK2",
+            "description": "Description 2",
+            "value": 99.3
+          },
+          {
+            "ticker": "TICK3",
+            "description": "Description 3",
+            "value": 50.12
+          },
+          {
+            "ticker": "FBIIX",
+            "description": "Fidelity International Bond Index Fund",
+            "value": 28.06
+          }
+        ]
+      },
+      {
+        "classificationTypeName": "Corporate",
+        "assets": [
+          {
+            "ticker": "TICK1",
+            "description": "Description 1",
+            "value": 29.86
+          },
+          {
+            "ticker": "TICK2",
+            "description": "Description 2",
+            "value": 50.32
+          },
+          {
+            "ticker": "TICK4",
+            "description": "Description 4",
+            "value": 0
+          },
+          {
+            "ticker": "FBIIX",
+            "description": "Fidelity International Bond Index Fund",
+            "value": 15.39
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "U.S. Bonds",
+    "classifications": [
+      {
+        "classificationTypeName": "Government",
+        "assets": [
+          {
+            "ticker": "TICK6",
+            "description": "Description 6",
+            "value": 30.47
+          },
+          {
+            "ticker": "TICK1",
+            "description": "Description 1",
+            "value": 24.83
+          }
+        ]
+      },
+      {
+        "assets": [
+          {
+            "ticker": "TICK1",
+            "description": "Description 1",
+            "value": 1.19
+          },
+          {
+            "ticker": "TICK2",
+            "description": "Description 2",
+            "value": 41.27
+          },
+          {
+            "ticker": "TICK3",
+            "description": "Description 3",
+            "value": 51.2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "Unclassified"
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "description": "Cash",
+    "userAccountId": 1,
+    "price": 1,
+    "quantity": 17.11,
+    "value": 17.11
+  },
+  {
+    "description": "Bonds",
+    "userAccountId": 2,
+    "price": 5,
+    "quantity": 0.628,
+    "value": 3.14,
+    "ticker": "BND"
+  },
+  {
+    "description": "Cash",
+    "userAccountId": 2,
+    "price": 1,
+    "quantity": 0.12,
+    "value": 0.12
+  },
+  {
+    "description": "Stocks",
+    "price": 0.20,
+    "quantity": 495.05,
+    "value": 99.01,
+    "ticker": "VTI",
+    "userAccountId": 3
+  },
+  {
+    "description": "Bonds",
+    "price": 4.1,
+    "quantity": 3.8,
+    "value": 15.58,
+    "ticker": "BND",
+    "userAccountId": 3
+  },
+  {
+    "description": "Stocks",
+    "price": 0.42,
+    "quantity": 3,
+    "value": 1.26,
+    "ticker": "SSS",
+    "userAccountId": 4
+  },
+  {
+    "description": "Oddball",
+    "price": 1.67,
+    "quantity": 34,
+    "value": 56.78,
+    "ticker": "",
+    "userAccountId": 4
+  }
+]
