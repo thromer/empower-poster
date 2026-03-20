@@ -1,5 +1,3 @@
-// https://claude.ai/chat/8f2e84fa-4254-4723-8ae9-e8bba724a486
-
 // Our representation of holding data
 export interface HoldingEntry {
   userAccountId: number;
@@ -15,6 +13,24 @@ export type Classifications = Record<string, Classification[]>;
 export interface Classification {
   classes: [string, string];
   pct: number;
+}
+
+export interface ClassificationError {
+  ticker: string;
+  classes: [string, string];
+  pct: number;
+}
+
+export interface ClassificationsResult {
+  classifications: Classifications;
+  errors: ClassificationError[];
+}
+
+interface ClassificationErrorInternal {
+  ticker: string;
+  classes: [string, string];
+  value: number;
+  userAccountId: number;
 }
 
 // Holding data returned by Empower
@@ -46,6 +62,7 @@ interface ClassificationValue {
   ticker: string;
   classes: [string, string];
   value: number;
+  userAccountId: number;
 }
 
 export function getHoldings(holdingsIn: HoldingEntryIn[]): HoldingEntry[] {
@@ -58,11 +75,17 @@ export function getHoldings(holdingsIn: HoldingEntryIn[]): HoldingEntry[] {
   }));
 }
 
-// Flatten Empower classification data
+interface ProcessClassificationsResult {
+  values: ClassificationValue[];
+  errors: ClassificationErrorInternal[];
+}
+
+// Flatten Empower classification data. Also return details for any negative allocations.
 function processClassifications(
   input: ClassificationIn[],
-): ClassificationValue[] {
+): ProcessClassificationsResult {
   const valueMap: ClassificationValue[] = [];
+  const errors: ClassificationErrorInternal[] = [];
 
   function processAssets(
     assets: Asset[],
@@ -70,15 +93,21 @@ function processClassifications(
     subClassName: string,
   ) {
     for (const asset of assets) {
-      if (asset.value < 0) {
-        const details = `${asset.ticker} ${className} ${asset.value}`;
-        throw new Error(`Unexpected negative value ${details}`);
-      }
       const ticker = asset.ticker || asset.description || "";
+      if (asset.value < 0) {
+        errors.push({
+          ticker,
+          classes: [className, subClassName],
+          value: asset.value,
+          userAccountId: asset.userAccountId,
+        });
+      }
+      const adjustedValue = Math.max(0, asset.value);
       valueMap.push({
         ticker,
         classes: [className, subClassName],
-        value: asset.value,
+        value: adjustedValue,
+        userAccountId: asset.userAccountId,
       });
     }
   }
@@ -99,44 +128,82 @@ function processClassifications(
       }
     }
   }
-  return valueMap;
+  return { values: valueMap, errors };
 }
 
 const PRECISION = 100000000000;
 
 function groupByTickerWithFractions(
   entries: ClassificationValue[],
-): Classifications {
-  const tickerMap = new Map<string, ClassificationValue[]>();
+  errors: ClassificationErrorInternal[],
+): ClassificationsResult {
+  const tickerAccountTotals = new Map<string, number>();
 
-  // Group by ticker
+  // Group and aggregate by ticker and classification
+  const tickerMap = new Map<string, Map<string, number>>();
   for (const entry of entries) {
-    const existing = tickerMap.get(entry.ticker);
-    if (existing) {
-      existing.push(entry);
-    } else {
-      tickerMap.set(entry.ticker, [entry]);
-    }
+    const classKey = entry.classes.join("\0");
+    const tickerClassMap =
+      tickerMap.get(entry.ticker) ?? new Map<string, number>();
+    if (!tickerMap.has(entry.ticker))
+      tickerMap.set(entry.ticker, tickerClassMap);
+
+    tickerClassMap.set(
+      classKey,
+      (tickerClassMap.get(classKey) ?? 0) + entry.value,
+    );
   }
+
   // Calculate fractions and transform
-  return Object.fromEntries(
-    Array.from(tickerMap, ([ticker, classificationValues]) => {
-      const total = classificationValues.reduce((sum, c) => sum + c.value, 0);
+  const classifications = Object.fromEntries(
+    Array.from(tickerMap, ([ticker, classMap]) => {
+      const total = Array.from(classMap.values()).reduce(
+        (sum, value) => sum + value,
+        0,
+      );
       return [
         ticker,
-        classificationValues.map((c) => ({
-          classes: c.classes,
+        Array.from(classMap, ([classKey, value]) => ({
+          classes: classKey.split("\0") as [string, string],
           // Treat 0/0 as 1
           pct:
-            c.value == total
+            value == total
               ? 1
-              : Math.round((c.value / total) * PRECISION) / PRECISION,
+              : Math.round((value / total) * PRECISION) / PRECISION,
         })),
       ];
     }),
   );
+
+  // Calculate error percentages
+  let processedErrors: ClassificationError[] = [];
+  if (errors.length > 0) {
+    // Build ticker account totals in one pass
+    for (const entry of [...entries, ...errors]) {
+      const tickerAccountKey = `${entry.ticker}\0${entry.userAccountId}`;
+      tickerAccountTotals.set(
+        tickerAccountKey,
+        (tickerAccountTotals.get(tickerAccountKey) ?? 0) + entry.value,
+      );
+    }
+
+    processedErrors = errors.map((error) => {
+      const tickerAccountKey = `${error.ticker}\0${error.userAccountId}`;
+      const tickerAccountTotal = tickerAccountTotals.get(tickerAccountKey) || 0;
+      return {
+        ticker: error.ticker,
+        classes: error.classes,
+        pct: tickerAccountTotal !== 0 ? error.value / tickerAccountTotal : -1,
+      };
+    });
+  }
+
+  return { classifications, errors: processedErrors };
 }
 
-export function getClassifications(input: ClassificationIn[]): Classifications {
-  return groupByTickerWithFractions(processClassifications(input));
+export function getClassifications(
+  input: ClassificationIn[],
+): ClassificationsResult {
+  const { values: adjustedEntries, errors } = processClassifications(input);
+  return groupByTickerWithFractions(adjustedEntries, errors);
 }

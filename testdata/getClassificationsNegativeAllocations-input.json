@@ -1,0 +1,142 @@
+[
+  {
+    "classificationTypeName": "Cash",
+    "assets": [
+      {
+        "ticker": "ASSET_ZERO_NEG",
+        "description": "Asset with zero negative allocations",
+        "value": 100.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_ONE_NEG",
+        "description": "Asset with one negative allocation",
+        "value": 50.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_TWO_NEG",
+        "description": "Asset with two negative allocations",
+        "value": 75.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 100.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 200.0,
+        "userAccountId": 2
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "US Stocks",
+    "assets": [
+      {
+        "ticker": "ASSET_ZERO_NEG",
+        "description": "Asset with zero negative allocations",
+        "value": 300.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_ONE_NEG",
+        "description": "Asset with one negative allocation",
+        "value": -25.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_TWO_NEG",
+        "description": "Asset with two negative allocations",
+        "value": -15.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": -20.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": -40.0,
+        "userAccountId": 2
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "Intl Stocks",
+    "assets": [
+      {
+        "ticker": "ASSET_ZERO_NEG",
+        "description": "Asset with zero negative allocations",
+        "value": 150.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_ONE_NEG",
+        "description": "Asset with one negative allocation",
+        "value": 125.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_TWO_NEG",
+        "description": "Asset with two negative allocations",
+        "value": -10.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 30.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 60.0,
+        "userAccountId": 2
+      }
+    ]
+  },
+  {
+    "classificationTypeName": "Bonds",
+    "assets": [
+      {
+        "ticker": "ASSET_ZERO_NEG",
+        "description": "Asset with zero negative allocations",
+        "value": 50.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_ONE_NEG",
+        "description": "Asset with one negative allocation",
+        "value": 25.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_TWO_NEG",
+        "description": "Asset with two negative allocations",
+        "value": 40.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 50.0,
+        "userAccountId": 1
+      },
+      {
+        "ticker": "ASSET_MULTI_ACCT",
+        "description": "Asset in multiple accounts with negative",
+        "value": 100.0,
+        "userAccountId": 2
+      }
+    ]
+  }
+]

@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { getHoldings, getClassifications } from "../src/processing.js";
-import type { Classifications, ClassificationIn } from "../src/processing.js";
+import type {
+  Classifications,
+  ClassificationIn,
+  ClassificationError,
+} from "../src/processing.js";
 import { globSync, readFileSync } from "fs";
 
 describe("getHoldings", () => {
@@ -87,6 +91,18 @@ function canonicalizeClassifications(
   // );
 }
 
+function canonicalizeErrors(
+  errors: ClassificationError[],
+): ClassificationError[] {
+  return errors.sort((a, b) => {
+    const tickerCompare = a.ticker.localeCompare(b.ticker);
+    if (tickerCompare !== 0) return tickerCompare;
+    const classKeyA = a.classes.join("\0");
+    const classKeyB = b.classes.join("\0");
+    return classKeyA.localeCompare(classKeyB);
+  });
+}
+
 describe("getClassifications", () => {
   it("should run getClassifications correctly", () => {
     for (const inputFile of globSync(
@@ -103,8 +119,11 @@ describe("getClassifications", () => {
       // const actualFile = inputFile.replace("-input", "-actual");
       // writeFileSync(actualFile, JSON.stringify(actual, null, 2));
       const expected = JSON.parse(readFileSync(expectedFile, "utf-8"));
-      expect(canonicalizeClassifications(actual)).toEqual(
-        canonicalizeClassifications(expected),
+      expect(canonicalizeClassifications(actual.classifications)).toEqual(
+        canonicalizeClassifications(expected.classifications),
+      );
+      expect(canonicalizeErrors(actual.errors)).toEqual(
+        canonicalizeErrors(expected.errors),
       );
     }
   });

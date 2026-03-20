@@ -72,7 +72,8 @@ async function postData(
     }
     const classificationsIn = data.spData.classifications[0].classifications;
     const holdings = getHoldings(data.spData.holdings);
-    const classifications = getClassifications(classificationsIn);
+    const classifications =
+      getClassifications(classificationsIn).classifications;
     const payload: PostPayload = { version: "0.2", holdings, classifications };
     const options = {
       method: "POST",
