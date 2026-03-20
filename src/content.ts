@@ -1,4 +1,6 @@
 import browser from "webextension-polyfill";
+import { getClassifications, getHoldings } from "./processing";
+import type { Classifications, HoldingEntry } from "./processing";
 import type { PostDataRequest, PostDataResponse, TokenResponse } from "./types";
 
 const fetchDataScript = async (csrf: string) => {
@@ -55,9 +57,89 @@ button.onclick = async () => {
       throw new Error("Can't retrieve data. Not logged in?");
     }
     const resultsJson = await fetchDataScript(csrf);
+
+    if (!resultsJson.spData) {
+      throw new Error("spData missing from JSON data, nothing to POST");
+    }
+
+    const classificationsIn =
+      resultsJson.spData.classifications[0].classifications;
+    const holdings = getHoldings(resultsJson.spData.holdings);
+    const classificationsResult = getClassifications(classificationsIn);
+
+    if (classificationsResult.errors.length > 0) {
+      if (classificationsResult.errors.length > 20) {
+        statusLine.innerHTML = `${classificationsResult.errors.length} negative categorizations found, see console for details`;
+        console.log("Negative categorizations:", classificationsResult.errors);
+      } else {
+        const errorList = classificationsResult.errors
+          .map((error) => {
+            const pct = parseFloat((error.pct * 100).toFixed(6));
+            const classStr = error.classes.filter(Boolean).join(":");
+            return `${error.ticker} ${classStr} ${pct}%`;
+          })
+          .join("<br>");
+        statusLine.innerHTML = `Negative categorization(s):<br>${errorList}`;
+      }
+
+      // Create buttons for user decision
+      const buttonContainer = document.createElement("div");
+      buttonContainer.style.cssText = "margin-top: 10px;";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Cancel";
+      cancelBtn.style.cssText =
+        "width: 100%; box-sizing: border-box; margin-bottom: 5px; padding: 5px 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px;";
+      cancelBtn.focus();
+
+      const postBtn = document.createElement("button");
+      postBtn.textContent = "Post anyway, with negative amounts zeroed";
+      postBtn.style.cssText =
+        "width: 100%; box-sizing: border-box; padding: 5px 10px; background: #dc3545; color: white; border: none; cursor: pointer; border-radius: 4px;";
+
+      cancelBtn.onclick = () => {
+        statusLine.textContent = "Ready";
+        statusLine.innerHTML = "";
+        button.disabled = false;
+        button.textContent = "Post data";
+      };
+
+      postBtn.onclick = async () => {
+        buttonContainer.remove();
+        statusLine.textContent = "Posting...";
+        await postProcessedData(
+          holdings,
+          classificationsResult.classifications,
+        );
+      };
+
+      buttonContainer.appendChild(cancelBtn);
+      buttonContainer.appendChild(postBtn);
+      statusLine.appendChild(buttonContainer);
+
+      button.disabled = false;
+      button.textContent = "Post data";
+      return;
+    }
+
+    await postProcessedData(holdings, classificationsResult.classifications);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : JSON.stringify(e);
+    statusLine.textContent = msg;
+    console.error(msg);
+    button.disabled = false;
+    button.textContent = "Post data";
+  }
+};
+
+async function postProcessedData(
+  holdings: HoldingEntry[],
+  classifications: Classifications,
+) {
+  try {
     const message: PostDataRequest = {
       type: "POST_DATA_REQUEST",
-      data: resultsJson,
+      data: { holdings, classifications },
     };
     const response = (await browser.runtime.sendMessage(
       message,
@@ -76,6 +158,6 @@ button.onclick = async () => {
     button.disabled = false;
     button.textContent = "Post data";
   }
-};
+}
 document.body.appendChild(button);
 document.body.appendChild(statusLine);

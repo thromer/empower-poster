@@ -2,7 +2,7 @@
   "name": "empower-poster",
   "private": true,
   "description": "Browser extension that posts Empower data to a user-provided endpoint",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Ted Romer <tromer@gmail.com>",
   "license": "MIT",
   "keywords": [

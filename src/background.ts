@@ -1,5 +1,4 @@
 import browser from "webextension-polyfill";
-import { getClassifications, getHoldings } from "./processing";
 import type { Classifications, HoldingEntry } from "./processing";
 import type {
   PostDataRequest,
@@ -66,15 +65,17 @@ async function postData(
     if (!postUrl) {
       throw new Error("POST URL not configured, can't post data");
     }
-    if (!data.spData) {
+    if (!data.holdings || !data.classifications) {
       console.log(`data=${JSON.stringify(data)}`);
-      throw new Error("spData missing from JSON data, nothing to POST");
+      throw new Error(
+        "holdings or classifications missing from processed data",
+      );
     }
-    const classificationsIn = data.spData.classifications[0].classifications;
-    const holdings = getHoldings(data.spData.holdings);
-    const classifications =
-      getClassifications(classificationsIn).classifications;
-    const payload: PostPayload = { version: "0.2", holdings, classifications };
+    const payload: PostPayload = {
+      version: "0.2",
+      holdings: data.holdings,
+      classifications: data.classifications,
+    };
     const options = {
       method: "POST",
       headers: {
