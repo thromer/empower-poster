@@ -84,22 +84,21 @@ async function postData(
       body: JSON.stringify(payload),
     };
     const r = await fetch(postUrl, options);
-    if (r.ok) {
-      return { ok: true };
+    if (!r.ok) {
+      return { ok: false, message: `${r.status}: ${await r.text()}` };
     }
     const contentType = r.headers.get("content-type");
     let detail: string;
-    try {
-      if (contentType?.includes("application/json")) {
-        const json = await r.json();
-        detail = json.message || json.error || JSON.stringify(json);
-      } else {
-        detail = await r.text();
-      }
-    } catch {
-      detail = r.statusText;
+    let ok: boolean;
+    if (contentType?.includes("application/json")) {
+      const json = await r.json();
+      ok = json.success === true && !json.error;
+      detail = json.message || json.error || JSON.stringify(json);
+    } else {
+      detail = await r.text();
+      ok = !detail;
     }
-    return { ok: false, message: `${r.status} ${detail}` };
+    return { ok, message: detail };
   } catch (e) {
     return {
       ok: false,
