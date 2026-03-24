@@ -12,13 +12,13 @@ export type Classifications = Record<string, Classification[]>;
 
 export interface Classification {
   classes: [string, string];
-  pct: number;
+  fraction: number;
 }
 
 export interface ClassificationError {
   ticker: string;
   classes: [string, string];
-  pct: number;
+  fraction: number;
 }
 
 export interface ClassificationsResult {
@@ -166,7 +166,7 @@ function groupByTickerWithFractions(
         Array.from(classMap, ([classKey, value]) => ({
           classes: classKey.split("\0") as [string, string],
           // Treat 0/0 as 1
-          pct:
+          fraction:
             value == total
               ? 1
               : Math.round((value / total) * PRECISION) / PRECISION,
@@ -193,7 +193,8 @@ function groupByTickerWithFractions(
       return {
         ticker: error.ticker,
         classes: error.classes,
-        pct: tickerAccountTotal !== 0 ? error.value / tickerAccountTotal : -1,
+        fraction:
+          tickerAccountTotal !== 0 ? error.value / tickerAccountTotal : -1,
       };
     });
   }

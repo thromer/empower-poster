@@ -86,7 +86,7 @@ async function postData(
       );
     }
     const payload: PostPayload = {
-      version: "0.2",
+      version: "0.3",
       holdings: data.holdings,
       classifications: data.classifications,
     };

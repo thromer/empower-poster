@@ -77,7 +77,7 @@ button.onclick = async () => {
       } else {
         const errorList = classificationsResult.errors
           .map((error) => {
-            const pct = parseFloat((error.pct * 100).toFixed(6));
+            const pct = parseFloat((error.fraction * 100).toFixed(6));
             const classStr = error.classes.filter(Boolean).join(":");
             return `${error.ticker} ${classStr} ${pct}%`;
           })
