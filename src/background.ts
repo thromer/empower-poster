@@ -26,11 +26,25 @@ browser.runtime.onInstalled.addListener(async (details) => {
 let csrf = "";
 
 browser.webRequest.onBeforeRequest.addListener(
-  (details: browser.WebRequest.OnBeforeRequestDetailsType) => {
+  async (details: browser.WebRequest.OnBeforeRequestDetailsType) => {
     const csrfVal = details?.requestBody?.formData?.["csrf"]?.[0];
     if (csrfVal && csrfVal !== csrf) {
       csrf = csrfVal;
       console.log("Saved token");
+      // Send CSRF token to all tabs with content script
+      const tabs = await browser.tabs.query({});
+      for (const tab of tabs) {
+        if (tab.id) {
+          try {
+            await browser.tabs.sendMessage(tab.id, {
+              type: "TOKEN_UPDATE",
+              csrf,
+            });
+          } catch {
+            // Ignore tabs that don't have content script loaded
+          }
+        }
+      }
     }
     return {};
   },

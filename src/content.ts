@@ -3,6 +3,8 @@ import { getClassifications, getHoldings } from "./processing";
 import type { Classifications, HoldingEntry } from "./processing";
 import type { PostDataRequest, PostDataResponse, TokenResponse } from "./types";
 
+let csrf = "";
+
 const fetchDataScript = async (csrf: string) => {
   try {
     const api_url =
@@ -33,26 +35,27 @@ const fetchDataScript = async (csrf: string) => {
   }
 };
 
+const container = document.createElement("div");
+container.style.display = "none";
+
 const button = document.createElement("button");
 button.textContent = "Post data";
 button.style.cssText =
   "position: fixed; top: 10px; right: 10px; z-index: 10000; padding: 10px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px;";
-const statusLine = document.createElement("div");
 
+const statusLine = document.createElement("div");
 statusLine.id = "post-data-status";
 statusLine.style.cssText =
   "position: fixed; top: 60px; right: 10px; z-index: 10000; padding: 5px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-size: 12px; max-width: 200px;";
 statusLine.textContent = "Ready";
 
+container.appendChild(button);
+container.appendChild(statusLine);
+
 button.onclick = async () => {
   button.disabled = true;
   statusLine.textContent = "Posting...";
   try {
-    const csrf = (
-      (await browser.runtime.sendMessage({
-        type: "TOKEN_REQUEST",
-      })) as TokenResponse
-    ).csrf;
     if (!csrf) {
       throw new Error("Can't retrieve data. Not logged in?");
     }
@@ -159,5 +162,33 @@ async function postProcessedData(
     button.textContent = "Post data";
   }
 }
-document.body.appendChild(button);
-document.body.appendChild(statusLine);
+
+// Listen for token updates from background script
+browser.runtime.onMessage.addListener((message) => {
+  if (message.type === "TOKEN_UPDATE" && message.csrf && !csrf) {
+    csrf = message.csrf;
+    container.style.display = "block";
+  }
+});
+
+// Fallback token request after 5 seconds
+setTimeout(async () => {
+  if (!csrf) {
+    try {
+      const response = (await browser.runtime.sendMessage({
+        type: "TOKEN_REQUEST",
+      })) as TokenResponse;
+
+      if (response.csrf) {
+        csrf = response.csrf;
+        container.style.display = "block";
+      }
+    } catch (e) {
+      console.log(
+        `token request failed: ${e instanceof Error ? e.message : e}`,
+      );
+    }
+  }
+}, 5000);
+
+document.body.appendChild(container);
