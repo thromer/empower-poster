@@ -1,19 +1,6 @@
-// Our representation of holding data
-export interface HoldingEntry {
-  userAccountId: number;
-  ticker: string;
-  price: number;
-  quantity: number;
-  value: number;
-}
+import type { HoldingEntry, Classifications } from "./api";
 
-// Our representation of per-asset classification by percentage
-export type Classifications = Record<string, Classification[]>;
-
-export interface Classification {
-  classes: [string, string];
-  fraction: number;
-}
+export type { Classifications };
 
 export interface ClassificationError {
   ticker: string;

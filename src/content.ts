@@ -1,6 +1,6 @@
 import browser from "webextension-polyfill";
 import { getClassifications, getHoldings } from "./processing";
-import type { Classifications, HoldingEntry } from "./processing";
+import type { Classifications, HoldingEntry } from "./api";
 import type { PostDataRequest, PostDataResponse, TokenResponse } from "./types";
 
 let csrf = "";

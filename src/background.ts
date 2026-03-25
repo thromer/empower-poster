@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import type { Classifications, HoldingEntry } from "./processing";
+import type { PostPayload } from "./api";
 import type {
   PostDataRequest,
   PostDataResponse,
@@ -7,12 +7,6 @@ import type {
   TokenResponse,
 } from "./types";
 import { getPostUrl } from "./util";
-
-interface PostPayload {
-  version: string;
-  holdings: HoldingEntry[];
-  classifications: Classifications;
-}
 
 console.log(`Background script started at ${new Date()}`);
 
