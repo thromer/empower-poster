@@ -1,0 +1,27 @@
+{
+  "name": "@righteffort/empower-poster-types",
+  "version": "0.2.4",
+  "description": "Type definitions for endpoints handling requests from the Empower Poster extension",
+  "author": "Ted Romer <tromer@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "finance"
+  ],
+  "homepage": "https://github.com/righteffort/empower-poster",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/righteffort/empower-poster.git"
+  },
+  "bugs": {
+    "url": "https://github.com/righteffort/empower-poster/issues"
+  },
+  "types": "index.d.ts",
+  "scripts": {
+    "prettier": "prettier *.{js,ts} --check",
+    "prettier:fix": "prettier *.{js,ts} --write",
+    "publish": "yarn npm publish --access public"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1"
+  }
+}

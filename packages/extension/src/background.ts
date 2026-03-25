@@ -1,5 +1,5 @@
 import browser from "webextension-polyfill";
-import type { PostPayload } from "./api";
+import type { PostPayload } from "@righteffort/empower-poster-types";
 import type {
   PostDataRequest,
   PostDataResponse,

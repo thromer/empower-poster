@@ -9,7 +9,7 @@ data.
 
 ## Endpoint request/response API
 
-The types referenced below are defined in [`api.ts`](./src/api.ts).
+The types referenced below are defined in [`api.ts`](./packages/extension/src/api.ts).
 
 ### Request
 

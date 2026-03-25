@@ -1,4 +1,7 @@
-import type { HoldingEntry, Classifications } from "./api";
+import type {
+  HoldingEntry,
+  Classifications,
+} from "@righteffort/empower-poster-types";
 
 export type { Classifications };
 
